@@ -33,14 +33,14 @@ class VariationalMarginalLogLikelihood(MarginalLogLikelihood):
         if self.combine_terms:
             res = log_likelihood - kl_divergence
             for _, param, prior in self.named_parameter_priors():
-                res.add_(prior.log_prob(param).sum())
+                res.add_(1. / self.num_data, prior.log_prob(param).sum())
             for _, params, transform, prior in self.named_derived_priors():
-                res.add_(prior.log_prob(transform(*params)).sum())
+                res.add_(1. / self.num_data, prior.log_prob(transform(*params)).sum())
             return res
         else:
             log_prior = torch.zeros_like(log_likelihood)
             for _, param, prior in self.named_parameter_priors():
-                log_prior.add_(prior.log_prob(param).sum())
+                log_prior.add_(1. / self.num_data, prior.log_prob(param).sum())
             for _, params, transform, prior in self.named_derived_priors():
-                log_prior.add_(prior.log_prob(transform(*params)).sum())
+                log_prior.add_(1. / self.num_data, prior.log_prob(transform(*params)).sum())
             return log_likelihood, kl_divergence, log_prior
