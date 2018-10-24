@@ -131,6 +131,9 @@ class DiagLazyTensor(LazyTensor):
 
         return inv_quad_term, log_det_term
 
+    def root_decomposition(self):
+        return self.__class__(self._diag.sqrt()).evaluate()
+
     def zero_mean_mvn_samples(self, num_samples):
         if self.ndimension() == 3:
             base_samples = torch.randn(
